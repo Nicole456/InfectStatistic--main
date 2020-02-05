@@ -1,9 +1,8 @@
-var start = new Date().getTime();
 const fs = require('fs')
 const readline = require('readline')  //读写文件的自带库
 const prior = require('./Lib.js')
-const MONTH = [0, 31, 28, 30]  //月份常量
-const provinces = new Set()  //存放省份的集合
+const MONTH = [0, 31, 28, 30, 51, 30, 31, 31, 30, 31, 30, 31]  //月份常量
+const Provinces = new Set()  //存放省份的集合
 const Total = {  //存放统计数据
    ip: {}, sp: {}, dead: {}, cure: {},
 }
@@ -27,11 +26,11 @@ function appendData(date) {
          if (!res) return
          for (key of Object.keys(Total)) { //初始化数据数字为Number类型，防止NaN
             if (!Total[key][res[1]]) { //非undefined类型代表已经初始化过
-               provinces.add(res[1])  //顺便收集唯一省份
+               Provinces.add(res[1])  //顺便收集唯一省份
                Total[key][res[1]] = 0
             }
             if (hasTwoPvovinces && !Total[key][res[2]]) { //同上，并且判断要收集第三项数据
-               provinces.add(res[2])  //顺便收集唯一省份
+               Provinces.add(res[2])  //顺便收集唯一省份
                Total[key][res[2]] = 0
             }
          }
@@ -89,7 +88,7 @@ function appendData(date) {
          appendData(`2020-${i <= 9 ? '0' + i : i}-${j <= 9 ? '0' + j : j}`)
       }
    var provincesSorted = []
-   for (let item of provinces.keys()) { //提取集合里的省份
+   for (let item of Provinces.keys()) { //提取集合里的省份
       provincesSorted.push(item)
    }
    provincesSorted = provincesSorted.sort((a, b) => { //进行汉字拼音排序
@@ -114,7 +113,6 @@ function appendData(date) {
    })
    article += `// 该文档并非真实数据，仅供测试使用\n// 命令：node InfectStatistic ${cmd}`
    fs.writeFileSync(CmdParam.out[0], article, 'utf-8')  //最后写入文件
-   console.log((new Date().getTime() - start ) + ' ms------');
 })()
 process.on('uncaughtException', (e) => {
    console.error('错误：', e.message)
