@@ -1,4 +1,3 @@
-var start = new Date().getTime();
 const fs = require('fs')
 const readline = require('readline')  //读写文件的自带库
 const prior = require('./Lib.js')
@@ -114,7 +113,6 @@ function appendData(date) {
    })
    article += `// 该文档并非真实数据，仅供测试使用\n// 命令：node InfectStatistic ${cmd}`
    fs.writeFileSync(CmdParam.out[0], article, 'utf-8')  //最后写入文件
-   console.log((new Date().getTime() - start ) + ' ms------');
 })()
 process.on('uncaughtException', (e) => {
    console.error('错误：', e.message)
