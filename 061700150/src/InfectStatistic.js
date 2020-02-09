@@ -1,5 +1,4 @@
-const fs = require('fs')
-const readline = require('readline')  //读写文件的自带库
+const fs = require('fs')  //读写文件的自带库
 const prior = require('./Lib.js')
 const MONTH = [0, 31, 28, 30, 51, 30, 31, 31, 30, 31, 30, 31]  //月份常量
 const Provinces = new Set()  //存放省份的集合
@@ -75,12 +74,12 @@ function washCmdParam(){
          }
       !checked && CmdParam[reading].push(v) //统计键值对
    })
-   if (fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0] < CmdParam.date)
+   if (fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0] < CmdParam.date[0])
       throw new Error('日期超出范围！（-date不会提供在日志最晚一天后的日期）');
-   if (!(CmdParam.date = CmdParam.date[0])) 
-      return fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0].split('-')
+   if (!CmdParam.date[0]) 
+      return fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0].split('-') //最大日期
    else //指定了日期
-      return CmdParam.date.split('-')
+      return CmdParam.date[0].split('-')
 }
 function print(){
    var provincesSorted = []
@@ -112,10 +111,11 @@ function print(){
 }
 (function main() {
    var [y,m,d] = washCmdParam()
-   for (var i = 1; i <= m; i++) //不循环年份，因为19年没有这个病毒，否则你会被叫去喝茶
+   for (var i = 1; i <= m; i++){ //不循环年份，因为老爷说了，19年没有叫这个名的病毒
       for (var j = 1; j <= (i != m ? MONTH[i] : d); j++) {
          appendData(`2020-${i <= 9 ? '0' + i : i}-${j <= 9 ? '0' + j : j}`)
       }
+   }
    print()
 })()
 process.on('uncaughtException', (e) => {
