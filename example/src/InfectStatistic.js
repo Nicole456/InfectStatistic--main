@@ -65,8 +65,6 @@ function appendData(date) {
    })
 }
 (function main() {
-   if (argv[0] != 'list')
-      throw new Error('命令仅可以接收list！') //给出非list命令，报错
    argv.slice(1).forEach(v => {
       var checked = false  //checked为true，说明该参数是一个以-为前缀的key
       for (item of Object.keys(CmdParam))
@@ -78,11 +76,12 @@ function appendData(date) {
       !checked && CmdParam[reading].push(v) //统计键值对
    })
    if (!(CmdParam.date = CmdParam.date[0])) { //没有指定日期的话
-      var today = new Date()
-      var [y, m, d] = [today.getFullYear(), today.getMonth() + 1, today.getDate()]
+      var [y, m, d] = fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0].split('-')
    } else {
       var [y, m, d] = CmdParam.date.split('-')
    }
+   if(fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0] < CmdParam.date)
+      throw new Error('日期超出范围！（-date不会提供在日志最晚一天后的日期）');
    for (var i = 1; i <= m; i++) //不循环年份，因为19年没有这个病毒，否则你会被叫去喝茶
       for (var j = 1; j <= (i != m ? MONTH[i] : d); j++) {
          appendData(`2020-${i <= 9 ? '0' + i : i}-${j <= 9 ? '0' + j : j}`)
