@@ -64,7 +64,7 @@ function appendData(date) {
          Total.sp[res[0]] -= Number(res[1])
    })
 }
-(function main() {
+function washCmdParam(){
    argv.slice(1).forEach(v => {
       var checked = false  //checked为true，说明该参数是一个以-为前缀的key
       for (item of Object.keys(CmdParam))
@@ -75,17 +75,14 @@ function appendData(date) {
          }
       !checked && CmdParam[reading].push(v) //统计键值对
    })
-   if (!(CmdParam.date = CmdParam.date[0])) { //没有指定日期的话
-      var [y, m, d] = fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0].split('-')
-   } else {
-      var [y, m, d] = CmdParam.date.split('-')
-   }
-   if(fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0] < CmdParam.date)
+   if (fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0] < CmdParam.date)
       throw new Error('日期超出范围！（-date不会提供在日志最晚一天后的日期）');
-   for (var i = 1; i <= m; i++) //不循环年份，因为19年没有这个病毒，否则你会被叫去喝茶
-      for (var j = 1; j <= (i != m ? MONTH[i] : d); j++) {
-         appendData(`2020-${i <= 9 ? '0' + i : i}-${j <= 9 ? '0' + j : j}`)
-      }
+   if (!(CmdParam.date = CmdParam.date[0])) 
+      return fs.readdirSync(CmdParam.log[0]).sort().reverse()[0].split('.')[0].split('-')
+   else //指定了日期
+      return CmdParam.date.split('-')
+}
+function print(){
    var provincesSorted = []
    for (let item of Provinces.keys()) { //提取集合里的省份
       provincesSorted.push(item)
@@ -112,6 +109,14 @@ function appendData(date) {
    })
    article += `// 该文档并非真实数据，仅供测试使用\n// 命令：node InfectStatistic ${cmd}`
    fs.writeFileSync(CmdParam.out[0], article, 'utf-8')  //最后写入文件
+}
+(function main() {
+   var [y,m,d] = washCmdParam()
+   for (var i = 1; i <= m; i++) //不循环年份，因为19年没有这个病毒，否则你会被叫去喝茶
+      for (var j = 1; j <= (i != m ? MONTH[i] : d); j++) {
+         appendData(`2020-${i <= 9 ? '0' + i : i}-${j <= 9 ? '0' + j : j}`)
+      }
+   print()
 })()
 process.on('uncaughtException', (e) => {
    console.error('错误：', e.message)

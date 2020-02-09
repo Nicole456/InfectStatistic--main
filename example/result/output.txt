@@ -1,5 +1,0 @@
-湖北 疑似患者632人 治愈45人 死亡31人
-山东 疑似患者35人 治愈0人 死亡0人
-台湾 疑似患者3340人 治愈42人 死亡5060人
-// 该文档并非真实数据，仅供测试使用
-// 命令：node InfectStatistic list -log ../log/ -out ../output.txt -province 湖北 山东 台湾 -type dead cure sp
